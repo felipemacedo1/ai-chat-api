@@ -16,6 +16,25 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(AiServiceException.class)
+    public ResponseEntity<ErrorResponse> handleAiServiceError(AiServiceException ex) {
+        log.error("AI service error: {} (retryable: {})", ex.getMessage(), ex.isRetryable());
+        
+        // Return user-friendly error message without exposing internal details
+        String userMessage = "Unable to process your request. Please try again.";
+        if (!ex.isRetryable()) {
+            userMessage = "Service temporarily unavailable. Please try again later.";
+        }
+        
+        ErrorResponse response = ErrorResponse.of(
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                "AI Service Error",
+                userMessage
+        );
+        
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> fieldErrors = new HashMap<>();

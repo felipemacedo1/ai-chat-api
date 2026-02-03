@@ -2,7 +2,6 @@ package com.chatai.controller;
 
 import com.chatai.dto.request.CreateMessageRequest;
 import com.chatai.dto.response.MessageResponse;
-import com.chatai.entity.MessageRole;
 import com.chatai.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,20 +40,21 @@ public class MessageController {
 
     /**
      * POST /api/conversations/{conversationId}/messages
-     * Creates a new user message in the conversation
-     * Requirements: 2.1, 5.1
+     * Creates a new user message and gets AI response
+     * Requirements: 2.1, 3.5, 5.1
      */
     @PostMapping
-    public ResponseEntity<MessageResponse> createMessage(
+    public ResponseEntity<List<MessageResponse>> createMessage(
             @PathVariable String conversationId,
             @Valid @RequestBody CreateMessageRequest request) {
         String userId = getCurrentUserId();
         log.info("Creating message in conversation: {} by user: {}", conversationId, userId);
         
-        MessageResponse response = messageService.create(conversationId, userId, request, MessageRole.USER);
+        // Create user message and get AI response
+        List<MessageResponse> responses = messageService.createWithAiResponse(conversationId, userId, request);
         
-        log.info("Message created with id: {} in conversation: {}", response.getId(), conversationId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        log.info("Created {} messages in conversation: {}", responses.size(), conversationId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
 
     private String getCurrentUserId() {

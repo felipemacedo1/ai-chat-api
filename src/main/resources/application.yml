@@ -28,3 +28,17 @@ logging:
   level:
     root: INFO
     com.chatai: ${LOG_LEVEL:INFO}
+
+# AI Provider Configuration
+ai:
+  provider: ${AI_PROVIDER:mock}
+  api-key: ${AI_API_KEY:}
+  base-url: ${AI_BASE_URL:}
+  model: ${AI_MODEL:gpt-3.5-turbo}
+  max-tokens: ${AI_MAX_TOKENS:2048}
+  temperature: ${AI_TEMPERATURE:0.7}
+  connection-timeout: ${AI_CONNECTION_TIMEOUT:30000}
+  read-timeout: ${AI_READ_TIMEOUT:60000}
+  max-retries: ${AI_MAX_RETRIES:3}
+  retry-delay-ms: ${AI_RETRY_DELAY_MS:1000}
+  retry-multiplier: ${AI_RETRY_MULTIPLIER:2.0}
